@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/style.css">
+    <title>Page Basique</title>
+</head>
+
+<body>
+    <header>
+        <h1>Interface Administrateur</h1>
+    </header>
+    <main>
+        <div id="liste" class="vanilla">
+            <h2>Générer items</h2>
+            <h4>F12 = Console pour voir les items du projet.</h4>
+            <button id="armorsBtn">Armures</button>
+            <button id="weaponsBtn">Armes</button>
+            <button id="petsBtn">Animaux</button>
+            <button id="objectsBtn">Objets</button>
+            <button id="potionsBtn">Potions</button>
+        </div>
+
+        <!-- Ajouter un nouvel item -->
+        <div id="addItem" class="vanilla">
+            <h2>Entrer l'ID de l'item souhaité</h2>
+            <input width="22em" type="text" id="itemIdInput" placeholder="Entrez l'ID proche de l'item"><!--Entrez l'ID proche de l'item temporaire ou le contenu JSON de l'item-->
+            <button id="addItemBtn">Confirmer</button>
+        </div>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Fonction pour traiter le clic sur les boutons de catégorie
+            function handleCategoryButtonClick(categoryId) {
+                const apiUrl = `https://api.github.com/repos/DraftBot-A-Discord-Adventure/DraftBot/contents/resources/text/${categoryId}`;
+
+                fetch(apiUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        let temporaryId = 1; // ID temporaire initial
+                        data.forEach(file => {
+                            const fileName = file.name;
+                            const filePath = file.path;
+
+                            // Vous pouvez maintenant utiliser le nom du fichier et le chemin pour récupérer le contenu du fichier
+                            fetch(`https://raw.githubusercontent.com/DraftBot-A-Discord-Adventure/DraftBot/master/${filePath}`)
+                                .then(response => response.text())
+                                .then(fileContent => {
+                                    // Utilisez fileContent comme vous le souhaitez (par exemple, obtenir le nom de l'article)
+                                    const itemName = getItemName(categoryId, fileContent);
+
+                                    // Affichez l'ID temporaire et le nom de l'article dans la console
+                                    console.log(`ID temporaire ${temporaryId}: ${itemName}`);
+
+                                    temporaryId++; // Incrémentation de l'ID temporaire pour le prochain item
+                                })
+                                .catch(error => console.error(`Erreur lors de la récupération du fichier (${fileName}) :`, error));
+                        });
+                    })
+                    .catch(error => console.error('Erreur lors de la récupération de la liste des fichiers :', error));
+            }
+
+            // Fonction pour obtenir le nom de l'article en fonction de la structure du fichier
+            function getItemName(categoryId, fileContent) {
+                try {
+                    if (categoryId === 'pets') {
+                        const petData = JSON.parse(fileContent);
+                        const maleName = petData.translations?.fr.maleName || '';
+                        const femaleName = petData.translations?.fr.femaleName || '';
+                        return `Male: ${maleName}, Female: ${femaleName}`;
+                    } else {
+                        const itemData = JSON.parse(fileContent);
+                        const itemName = itemData.translations?.fr || itemData.translations?.en || '';
+                        return itemName;
+                    }
+                } catch (error) {
+                    console.error('Erreur lors de l\'analyse du fichier JSON :', error);
+                    return '';
+                }
+            }
+
+            // Fonction pour traiter le clic sur le bouton "Ajouter"
+            function handleAddItemClick() {
+                const itemIdInput = document.getElementById('itemIdInput');
+                const itemIdOrJson = itemIdInput.value.trim();
+
+                if (itemIdOrJson) {
+                    // Envoyer les données au backend (remplacez par l'URL réelle de votre backend)
+                    const apiUrl = 'https://votre-backend.com/api/addItem'; // Remplacez par votre URL
+                    const requestData = {
+                        userId: 'identifiant_du_utilisateur', // Remplacez par l'identifiant de l'utilisateur
+                        itemData: itemIdOrJson,
+                    };
+
+                    fetch(apiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(requestData),
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('Réponse du serveur :', data);
+                            // Vous pouvez traiter la réponse du serveur ici si nécessaire
+                        })
+                        .catch(error => console.error('Erreur lors de la communication avec le serveur :', error));
+                } else {
+                    console.log('Veuillez entrer l\'ID temporaire ou le contenu JSON de l\'item.');
+                }
+            }
+
+            // Associer la fonction à chaque bouton de catégorie
+            document.getElementById('armorsBtn').addEventListener('click', () => handleCategoryButtonClick('armors'));
+            document.getElementById('weaponsBtn').addEventListener('click', () => handleCategoryButtonClick('weapons'));
+            document.getElementById('petsBtn').addEventListener('click', () => handleCategoryButtonClick('pets'));
+            document.getElementById('objectsBtn').addEventListener('click', () => handleCategoryButtonClick('objects'));
+            document.getElementById('potionsBtn').addEventListener('click', () => handleCategoryButtonClick('potions'));
+
+            // Associer la fonction à chaque bouton de don
+            const giveButtons = document.querySelectorAll('.giveCategory');
+            giveButtons.forEach(button => {
+                button.addEventListener('click', () => handleCategoryButtonClick(button.dataset.folder));
+            });
+
+            // Associer la fonction au clic sur le bouton "Ajouter"
+            document.getElementById('addItemBtn').addEventListener('click', handleAddItemClick);
+        });
+    </script>
+</body>
+
+</html>

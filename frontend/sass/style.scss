@@ -1,0 +1,93 @@
+$color_1: #333;
+$color_2: #fff;
+$font-family_1: 'Arial', sans-serif;
+$background-color_1: #f2f2f2;
+$background-color_2: #333;
+$background-color_3: #555;
+$shadow-color: rgba(0, 0, 0, 0.3);
+
+body {
+  font-family: $font-family_1;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: $background-color_1;
+  color: $color_1;
+}
+
+header {
+  text-align: center;
+  padding: 20px;
+  background-color: $background-color_2;
+  color: $color_2;
+  box-shadow: 0px 2px 5px $shadow-color; /* Ajout d'une ombre sous le header */
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.5em;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 20px;
+}
+
+.vanilla {
+  padding: 1em;
+  margin: 10px;
+  width: 300px;
+  transition: transform 1.5s ease; /* Ajout de l'animation pour le grossissement */
+}
+
+h2 {
+  margin: 0;
+  font-size: 1.2em;
+  text-align: center;
+  padding-bottom: 10px; /* Ajout du padding-bottom aux h2 */
+}
+
+button {
+  padding: 15px 20px;
+  font-size: 1em;
+  background-color: $background-color_2;
+  color: $color_2;
+  border: none;
+  cursor: pointer;
+  margin: 10px 0;
+  width: 100%;
+  box-shadow: 0px 2px 5px $shadow-color; /* Ajout d'une ombre sur les boutons */
+  &:hover {
+    background-color: $background-color_3;
+    transform: scale(1.1); /* Ajout du grossissement au survol */
+    transition: transform 1s ease; /* Ajout de l'animation pour le rétrécissement */
+  }
+}
+
+.menu-item {
+  margin-bottom: 15px;
+  font-size: 1.2em;
+}
+
+
+
+/* Style pour l'input et le bouton "Ajouter un nouvel item" */
+#addItem {
+  input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+
+  button {
+    background-color: $background-color_2;
+    &:hover {
+      background-color: $background-color_3;
+    }
+  }
+}
